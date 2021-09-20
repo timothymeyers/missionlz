@@ -54,7 +54,6 @@ module logAnalyticsWorkspace './modules/logAnalyticsWorkspace.bicep' = {
     name: logAnalyticsWorkspaceName
     location: logAnalyticsWorkspaceLocation
     tags: tags
-
     retentionInDays: logAnalyticsWorkspaceRetentionInDays
     skuName: logAnalyticsWorkspaceSkuName
     workspaceCappingDailyQuotaGb: logAnalyticsWorkspaceCappingDailyQuotaGb
@@ -252,6 +251,8 @@ module sharedServicesVirtualNetworkPeering './modules/spokeNetworkPeering.bicep'
   }
 }
 
+// policy assignment
+
 module hubPolicyAssignment './modules/policyAssignment.bicep' = {
   name: '${hubResourceGroupName}-policyAssignment'
   scope: resourceGroup(hubSubscriptionId, hubResourceGroupName)
@@ -296,6 +297,8 @@ module identityPolicyAssignment './modules/policyAssignment.bicep' = {
   }
 }
 
+// activity logging to LA
+
 module hubSubscriptionCreateActivityLogging './modules/centralLogging.bicep' = {
   name: 'deploy-hub-sub-activity-logging'
   scope: subscription(hubSubscriptionId)
@@ -328,6 +331,55 @@ module sharedServicesSubscriptionCreateActivityLogging './modules/centralLogging
   scope: subscription(sharedServicesSubscriptionId)
   params: {
     diagnosticSettingName: 'log-sharedServices-sub-activity-to-${logAnalyticsWorkspace.outputs.name}'
+    logAnalyticsWorkspaceId: logAnalyticsWorkspace.outputs.id
+  }
+}
+
+// operations log analytics workspace diagnostic logging
+
+module logAnalyticsDiagnosticLogging './modules/logAnalyticsDiagnosticLogging.bicep' = {
+  name: 'delpoy-diagnostic-logging-LAWS'
+  scope: resourceGroup(operationsSubscriptionId, operationsResourceGroupName)
+  params: {
+    diagnosticStorageAccountName: operationsLogStorageAccountName
+    logAnalyticsWorkspaceName: logAnalyticsWorkspace.outputs.name
+    enableDiagnostics: true
+  }
+  dependsOn: [
+    operations
+  ]
+}
+
+// security center
+
+module hubSecurityCenter './modules/securityCenter.bicep' = {
+  name: 'set-hub-sub-security-center'
+  scope: subscription(hubSubscriptionId)
+  params: {
+    logAnalyticsWorkspaceId: logAnalyticsWorkspace.outputs.id
+  }
+}
+
+module operationsSecurityCenter './modules/securityCenter.bicep' = if(hubSubscriptionId != operationsSubscriptionId) {
+  name: 'set-operations-sub-security-center'
+  scope: subscription(sharedServicesSubscriptionId)
+  params: {
+    logAnalyticsWorkspaceId: logAnalyticsWorkspace.outputs.id
+  }
+}
+
+module identitySecurityCenter './modules/securityCenter.bicep' = if(hubSubscriptionId != identitySubscriptionId) {
+  name: 'set-identity-sub-security-center'
+  scope: subscription(sharedServicesSubscriptionId)
+  params: {
+    logAnalyticsWorkspaceId: logAnalyticsWorkspace.outputs.id
+  }
+}
+
+module sharedServicesSecurityCenter './modules/securityCenter.bicep' = if(hubSubscriptionId != sharedServicesSubscriptionId) {
+  name: 'set-sharedServices-sub-security-center'
+  scope: subscription(sharedServicesSubscriptionId)
+  params: {
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.outputs.id
   }
 }
