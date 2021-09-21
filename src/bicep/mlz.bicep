@@ -362,7 +362,7 @@ module hubSecurityCenter './modules/securityCenter.bicep' = {
 
 module operationsSecurityCenter './modules/securityCenter.bicep' = if(hubSubscriptionId != operationsSubscriptionId) {
   name: 'set-operations-sub-security-center'
-  scope: subscription(sharedServicesSubscriptionId)
+  scope: subscription(operationsSubscriptionId)
   params: {
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.outputs.id
   }
@@ -370,7 +370,7 @@ module operationsSecurityCenter './modules/securityCenter.bicep' = if(hubSubscri
 
 module identitySecurityCenter './modules/securityCenter.bicep' = if(hubSubscriptionId != identitySubscriptionId) {
   name: 'set-identity-sub-security-center'
-  scope: subscription(sharedServicesSubscriptionId)
+  scope: subscription(identitySubscriptionId)
   params: {
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.outputs.id
   }
