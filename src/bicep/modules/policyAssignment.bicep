@@ -26,6 +26,9 @@ var policyDefinitionID = {
 
 var modifiedAssignment = ( environment().name =~ 'AzureCloud' && builtInAssignment =~ 'IL5' ? 'NIST' : builtInAssignment )
 var assignmentName = '${modifiedAssignment} ${resourceGroup().name}'
+var agentVmmsAssignmentName = 'Deploy VMSS Agents ${resourceGroup().name}'
+var agentVmAssignmentName = 'Deploy VM Agents ${resourceGroup().name}'
+var contributorRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')
 
 resource assignment 'Microsoft.Authorization/policyAssignments@2020-09-01' = if (!empty(modifiedAssignment)){
   name: assignmentName
@@ -38,3 +41,76 @@ resource assignment 'Microsoft.Authorization/policyAssignments@2020-09-01' = if 
     type: 'SystemAssigned'
   }
 }
+
+resource vmmsAgentAssignment 'Microsoft.Authorization/policyAssignments@2020-09-01' = {
+  name: agentVmmsAssignmentName
+  location: resourceGroup().location
+  properties: {
+    policyDefinitionId: '/providers/Microsoft.Authorization/policySetDefinitions/75714362-cae7-409e-9b99-a8e5075b7fad'
+    parameters: {
+      logAnalytics_1: {
+        value: logAnalyticsWorkspace.id
+      }
+    }
+  }
+  identity: {
+    type: 'SystemAssigned'
+  }
+}
+
+resource vmAgentAssignment 'Microsoft.Authorization/policyAssignments@2020-09-01' = {
+  name: agentVmAssignmentName
+  location: resourceGroup().location
+  properties: {
+    policyDefinitionId: '/providers/Microsoft.Authorization/policySetDefinitions/55f3eceb-5573-4f18-9695-226972c6d74a'
+    parameters: {
+      logAnalytics_1: {
+        value: logAnalyticsWorkspace.id
+      }
+    }
+  }
+  identity: {
+    type: 'SystemAssigned'
+  }
+}
+
+resource policyRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+  name: guid(contributorRoleDefinitionId,assignmentName)
+  scope: resourceGroup()
+  dependsOn: [
+    assignment
+  ]
+  properties: {
+    roleDefinitionId: contributorRoleDefinitionId
+    principalId: assignment.identity.principalId
+    principalType: 'ServicePrincipal'
+    }
+  }
+
+resource vmmsPolicyRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+  name: guid(contributorRoleDefinitionId,agentVmmsAssignmentName)
+  scope: resourceGroup()
+  dependsOn: [
+    vmmsAgentAssignment
+    policyRoleAssignment
+  ]
+  properties: {
+    roleDefinitionId: contributorRoleDefinitionId
+    principalId: vmmsAgentAssignment.identity.principalId
+    principalType: 'ServicePrincipal'
+    }
+  }
+
+resource vmPolicyRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+  name: guid(contributorRoleDefinitionId,agentVmAssignmentName)
+  scope: resourceGroup()
+  dependsOn: [
+    vmAgentAssignment
+    vmmsPolicyRoleAssignment
+  ]
+  properties: {
+    roleDefinitionId: contributorRoleDefinitionId
+    principalId: vmAgentAssignment.identity.principalId
+    principalType: 'ServicePrincipal'
+    }
+  }

@@ -1,14 +1,6 @@
 targetScope = 'subscription'
 
-var bundle = (environment().name == 'AzureUSGovernment' ? [  
-  'SqlServers'
-  'VirtualMachines'
-  'StorageAccounts'
-  'ContainerRegistry'
-  'KubernetesService'
-  'Dns'
-  'Arm'
-  ] : [
+var bundle = (environment().name != 'AzureUSGovernment' ? [  
   'KeyVaults'
   'SqlServers'
   'VirtualMachines'
@@ -17,6 +9,14 @@ var bundle = (environment().name == 'AzureUSGovernment' ? [
   'KubernetesService'
   'SqlServerVirtualMachines'
   'AppServices'
+  'Dns'
+  'Arm'
+  ] : [
+  'SqlServers'
+  'VirtualMachines'
+  'StorageAccounts'
+  'ContainerRegistry'
+  'KubernetesService'
   'Dns'
   'Arm'
 ])
@@ -37,6 +37,9 @@ param securitySettings string = 'On'
 
 @description('Specify the ID of your custom Log Analytics workspace to collect ASC data.')
 param logAnalyticsWorkspaceId string
+
+@description('Email address of the contact, in the form of john@doe.com')
+param emailSecurityContact string
 
 // security center
 
@@ -64,15 +67,16 @@ resource Microsoft_Security_workspaceSettings_default 'Microsoft.Security/worksp
   }
 }
 
-//resource default1 'Microsoft.Security/securityContacts@2017-08-01-preview' = {
-//  name: 'securityNotifications'
-//  properties: {
-//    alertsToAdmins: 'On'
-//    alertNotifications: 'On'
-//  }
-//}
+resource securityNotifications 'Microsoft.Security/securityContacts@2017-08-01-preview' = if (!empty(emailSecurityContact)) {
+  name: 'securityNotifications'
+  properties: {
+    alertsToAdmins: 'On'
+    alertNotifications: 'On'
+    email: emailSecurityContact
+  }
+}
 
-resource Microsoft_Security_policies_default 'Microsoft.Security/policies@2015-06-01-preview' = {
+resource securityPoliciesDefault 'Microsoft.Security/policies@2015-06-01-preview' = {
   name: 'default'
   properties: {
     policyLevel: 'Subscription'

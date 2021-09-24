@@ -38,6 +38,13 @@ var solutions = [
     publisher: 'Microsoft'
     promotionCode: ''
   }
+  {
+    deploy: true
+    name: 'ContainerInsights'
+    publisher: 'Microsoft'
+    product: 'OMSGallery/ContainerInsights'
+    promotionCode: ''
+  }
 ]
 
 @description('Enable lock to prevent accidental deletion')

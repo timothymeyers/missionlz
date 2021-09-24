@@ -357,6 +357,7 @@ module hubSecurityCenter './modules/securityCenter.bicep' = {
   scope: subscription(hubSubscriptionId)
   params: {
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.outputs.id
+    emailSecurityContact: emailSecurityContact
   }
 }
 
@@ -365,6 +366,7 @@ module operationsSecurityCenter './modules/securityCenter.bicep' = if(hubSubscri
   scope: subscription(operationsSubscriptionId)
   params: {
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.outputs.id
+    emailSecurityContact: emailSecurityContact
   }
 }
 
@@ -373,6 +375,7 @@ module identitySecurityCenter './modules/securityCenter.bicep' = if(hubSubscript
   scope: subscription(identitySubscriptionId)
   params: {
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.outputs.id
+    emailSecurityContact: emailSecurityContact
   }
 }
 
@@ -381,6 +384,7 @@ module sharedServicesSecurityCenter './modules/securityCenter.bicep' = if(hubSub
   scope: subscription(sharedServicesSubscriptionId)
   params: {
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.outputs.id
+    emailSecurityContact: emailSecurityContact
   }
 }
 
@@ -495,6 +499,9 @@ param policy string = ''
 param tags object = {
   'resourcePrefix': resourcePrefix
 }
+
+@description('Email address of the contact, in the form of john@doe.com')
+param emailSecurityContact string = ''
 
 param uniqueId string = uniqueString(deployment().name)
 param nowUtc string = utcNow()
