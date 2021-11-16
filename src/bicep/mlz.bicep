@@ -1,6 +1,337 @@
 // scope
 targetScope = 'subscription'
 
+// parameters
+
+@minLength(3)
+@maxLength(24)
+@description('A name (3-24 alphanumeric characters in length without whitespace) used to prefix resources and generate uniqueness for resources with globally unique naming requirements like Storage Accounts and Log Analytics Workspaces')
+param workload string = 'mlz'
+param hubSubscriptionId string = subscription().subscriptionId
+param identitySubscriptionId string = hubSubscriptionId
+param operationsSubscriptionId string = hubSubscriptionId
+param sharedServicesSubscriptionId string = hubSubscriptionId
+
+@allowed([
+  'Standard'
+  'Premium'
+])
+param firewallSkuTier string = 'Premium'
+
+param hubLocation string = deployment().location
+param hubVirtualNetworkAddressPrefix string = '10.0.100.0/24'
+param hubSubnetAddressPrefix string = '10.0.100.128/27'
+param hubVirtualNetworkDiagnosticsLogs array = []
+param hubVirtualNetworkDiagnosticsMetrics array = []
+param hubNetworkSecurityGroupRules array = [
+  {
+    name: 'allow_ssh'
+    properties: {
+      description: 'Allow SSH access from anywhere'
+      access: 'Allow'
+      priority: 100
+      protocol: 'Tcp'
+      direction: 'Inbound'
+      sourcePortRange: '*'
+      sourceAddressPrefix: '*'
+      destinationPortRange: '22'
+      destinationAddressPrefix: '*'
+    }
+  }
+  {
+    name: 'allow_rdp'
+    properties: {
+      description: 'Allow RDP access from anywhere'
+      access: 'Allow'
+      priority: 200
+      protocol: 'Tcp'
+      direction: 'Inbound'
+      sourcePortRange: '*'
+      sourceAddressPrefix: '*'
+      destinationPortRange: '3389'
+      destinationAddressPrefix: '*'
+    }
+  }
+]
+param hubNetworkSecurityGroupDiagnosticsLogs array = [
+  {
+    category: 'NetworkSecurityGroupEvent'
+    enabled: true
+  }
+  {
+    category: 'NetworkSecurityGroupRuleCounter'
+    enabled: true
+  }
+]
+param hubNetworkSecurityGroupDiagnosticsMetrics array = []
+param hubSubnetServiceEndpoints array = [
+  {
+    service: 'Microsoft.Storage'
+  }
+]
+
+param hubLogStorageSkuName string = 'Standard_GRS'
+
+param firewallName string = 'afw'
+param firewallManagementSubnetAddressPrefix string = '10.0.100.64/26'
+param firewallClientSubnetAddressPrefix string = '10.0.100.0/26'
+param firewallPolicyName string = 'afwp'
+param firewallThreatIntelMode string = 'Alert'
+param firewallDiagnosticsLogs array = [
+  {
+    category: 'AzureFirewallApplicationRule'
+    enabled: true
+  }
+  {
+    category: 'AzureFirewallNetworkRule'
+    enabled: true
+  }
+  {
+    category: 'AzureFirewallDnsProxy'
+    enabled: true
+  }
+]
+param firewallDiagnosticsMetrics array = [
+  {
+    category: 'AllMetrics'
+    enabled: true
+  }
+]
+
+param firewallClientIpConfigurationName string = 'firewall-client-ip-config'
+param firewallClientSubnetServiceEndpoints array = []
+param firewallClientPublicIPAddressName string = 'firewall-client-public-ip'
+param firewallClientPublicIPAddressSkuName string = 'Standard'
+param firewallClientPublicIpAllocationMethod string = 'Static'
+param firewallClientPublicIPAddressAvailabilityZones array = []
+param firewallManagementIpConfigurationName string = 'firewall-management-ip-config'
+param firewallManagementSubnetServiceEndpoints array = []
+param firewallManagementPublicIPAddressName string = 'firewall-management-public-ip'
+param firewallManagementPublicIPAddressSkuName string = 'Standard'
+param firewallManagementPublicIpAllocationMethod string = 'Static'
+param firewallManagementPublicIPAddressAvailabilityZones array = []
+param publicIPAddressDiagnosticsLogs array = [
+  {
+    category: 'DDoSProtectionNotifications'
+    enabled: true
+  }
+  {
+    category: 'DDoSMitigationFlowLogs'
+    enabled: true
+  }
+  {
+    category: 'DDoSMitigationReports'
+    enabled: true
+  }
+]
+param publicIPAddressDiagnosticsMetrics array = [
+  {
+    category: 'AllMetrics'
+    enabled: true
+  }
+]
+
+param identityLocation string = hubLocation
+param identityVirtualNetworkAddressPrefix string = '10.0.110.0/26'
+param identitySubnetAddressPrefix string = '10.0.110.0/27'
+param identityVirtualNetworkDiagnosticsLogs array = hubVirtualNetworkDiagnosticsLogs
+param identityVirtualNetworkDiagnosticsMetrics array = hubVirtualNetworkDiagnosticsMetrics
+param identityNetworkSecurityGroupRules array = hubNetworkSecurityGroupRules
+param identityNetworkSecurityGroupDiagnosticsLogs array = hubNetworkSecurityGroupDiagnosticsLogs
+param identityNetworkSecurityGroupDiagnosticsMetrics array = hubNetworkSecurityGroupDiagnosticsMetrics
+param identitySubnetServiceEndpoints array = hubSubnetServiceEndpoints
+param identityLogStorageSkuName string = hubLogStorageSkuName
+
+param operationsLocation string = hubLocation
+param operationsVirtualNetworkAddressPrefix string = '10.0.115.0/26'
+param operationsVirtualNetworkDiagnosticsLogs array = hubVirtualNetworkDiagnosticsLogs
+param operationsVirtualNetworkDiagnosticsMetrics array = hubVirtualNetworkDiagnosticsMetrics
+param operationsNetworkSecurityGroupRules array = hubNetworkSecurityGroupRules
+param operationsNetworkSecurityGroupDiagnosticsLogs array = hubNetworkSecurityGroupDiagnosticsLogs
+param operationsNetworkSecurityGroupDiagnosticsMetrics array = hubNetworkSecurityGroupDiagnosticsMetrics
+param operationsSubnetAddressPrefix string = '10.0.115.0/27'
+param operationsSubnetServiceEndpoints array = hubSubnetServiceEndpoints
+param operationsLogStorageSkuName string = hubLogStorageSkuName
+
+param sharedServicesLocation string = hubLocation
+param sharedServicesVirtualNetworkAddressPrefix string = '10.0.120.0/26'
+param sharedServicesSubnetAddressPrefix string = '10.0.120.0/27'
+param sharedServicesVirtualNetworkDiagnosticsLogs array = hubVirtualNetworkDiagnosticsLogs
+param sharedServicesVirtualNetworkDiagnosticsMetrics array = hubVirtualNetworkDiagnosticsMetrics
+param sharedServicesNetworkSecurityGroupRules array = hubNetworkSecurityGroupRules
+param sharedServicesNetworkSecurityGroupDiagnosticsLogs array = hubNetworkSecurityGroupDiagnosticsLogs
+param sharedServicesNetworkSecurityGroupDiagnosticsMetrics array = hubNetworkSecurityGroupDiagnosticsMetrics
+param sharedServicesSubnetServiceEndpoints array = hubSubnetServiceEndpoints
+param sharedServicesLogStorageSkuName string = hubLogStorageSkuName
+
+param logAnalyticsWorkspaceLocation string = operationsLocation
+param logAnalyticsWorkspaceCappingDailyQuotaGb int = -1
+param logAnalyticsWorkspaceRetentionInDays int = 30
+param logAnalyticsWorkspaceSkuName string = 'PerGB2018'
+@description('When set to "True", enables Microsoft Sentinel within the MLZ Log Analytics workspace.')
+param deploySentinel bool = false
+
+@allowed([
+  'NIST'
+  'IL5' // AzureUsGoverment only, trying to deploy IL5 in AzureCloud will switch to NIST
+  'CMMC'
+])
+@description('[NIST/IL5/CMMC] Built-in policy assignments to assign, default is NIST. IL5 is only available for AzureUsGovernment and will switch to NIST if tried in AzureCloud.')
+param policy string = 'NIST'
+param deployPolicy bool = false
+
+@description('Email address of the contact, in the form of john@doe.com')
+param emailSecurityContact string = ''
+param deployASC bool = false
+
+@description('Provision Azure Bastion Host and jumpboxes in this deployment')
+param deployRemoteAccess bool = false
+param bastionHostName string = 'bastionHost'
+param bastionHostSubnetAddressPrefix string = '10.0.100.160/27'
+param bastionHostPublicIPAddressName string = 'bastionHostPublicIPAddress'
+param bastionHostPublicIPAddressSkuName string = 'Standard'
+param bastionHostPublicIPAddressAllocationMethod string = 'Static'
+param bastionHostPublicIPAddressAvailabilityZones array = []
+param bastionHostIPConfigurationName string = 'bastionHostIPConfiguration'
+param linuxNetworkInterfaceName string = 'linuxVmNetworkInterface'
+param linuxNetworkInterfaceIpConfigurationName string = 'linuxVmIpConfiguration'
+param linuxNetworkInterfacePrivateIPAddressAllocationMethod string = 'Dynamic'
+param linuxVmName string = 'linuxVirtualMachine'
+param linuxVmSize string = 'Standard_B2s'
+param linuxVmOsDiskCreateOption string = 'FromImage'
+param linuxVmOsDiskType string = 'Standard_LRS'
+param linuxVmImagePublisher string = 'Canonical'
+param linuxVmImageOffer string = 'UbuntuServer'
+param linuxVmImageSku string = '18.04-LTS'
+param linuxVmImageVersion string = 'latest'
+param linuxVmAdminUsername string = 'azureuser'
+@allowed([
+  'sshPublicKey'
+  'password'
+])
+param linuxVmAuthenticationType string = 'password'
+@secure()
+@minLength(14)
+param linuxVmAdminPasswordOrKey string = deployRemoteAccess ? '' : newGuid()
+param windowsNetworkInterfaceName string = 'windowsVmNetworkInterface'
+param windowsNetworkInterfaceIpConfigurationName string = 'windowsVmIpConfiguration'
+param windowsNetworkInterfacePrivateIPAddressAllocationMethod string = 'Dynamic'
+param windowsVmName string = 'windowsVm'
+param windowsVmSize string = 'Standard_DS1_v2'
+param windowsVmAdminUsername string = 'azureuser'
+@secure()
+@minLength(14)
+param windowsVmAdminPassword string = deployRemoteAccess ? '' : newGuid()
+param windowsVmPublisher string = 'MicrosoftWindowsServer'
+param windowsVmOffer string = 'WindowsServer'
+param windowsVmSku string = '2019-datacenter'
+param windowsVmVersion string = 'latest'
+param windowsVmCreateOption string = 'FromImage'
+param windowsVmStorageAccountType string = 'StandardSSD_LRS'
+
+param customTags object = {}
+
+//param uniqueId string = uniqueString(deployment().name)
+param nowUtc string = utcNow()
+
+// variables
+
+var resourcePrefix = empty(deployment().name) ? workload : deployment().name 
+
+var locations = json(loadTextContent('global/locations.json'))
+var locationPrefix = locations['${deployment().location}'].prefix
+var hubResourceGroupName = 'rg-${resourcePrefix}-hub-${locationPrefix}'
+var hubVirtualNetworkName = 'vnet-hub'
+var hubSubnetName = 'snet-hub'
+var hubNetworkSecurityGroupName = 'nsg-hub'
+var hubLogStorageAccountName = toLower(take('st${uniqueString(hubResourceGroupName)}', 24))
+var sharedServicesResourceGroupName = replace(hubResourceGroupName, 'hub', 'sharedServices')
+var sharedServicesLogStorageAccountName = toLower(take('st${uniqueString(sharedServicesResourceGroupName)}', 24))
+var operationsResourceGroupName = replace(hubResourceGroupName, 'hub', 'operations')
+var operationsLogStorageAccountName = toLower(take('st${uniqueString(operationsResourceGroupName)}', 24))
+var identityResourceGroupName = replace(hubResourceGroupName, 'hub', 'identity')
+var identityLogStorageAccountName = toLower(take('st${uniqueString(identityResourceGroupName)}', 24))
+
+var defaultTags = {
+  'resourcePrefix': resourcePrefix
+  'DeploymentType': 'MissionLandingZoneARM'
+}
+var tags = union(customTags, defaultTags )
+
+var logAnalyticsWorkspaceName = take('${resourcePrefix}-laws', 63)
+
+var firewallManagementSubnetName = 'AzureFirewallManagementSubnet' //this must be 'AzureFirewallManagementSubnet'
+var firewallClientSubnetName = 'AzureFirewallSubnet' //this must be 'AzureFirewallSubnet'
+
+var identityVirtualNetworkName = replace(hubVirtualNetworkName, 'hub', 'identity')
+var identityNetworkSecurityGroupName = replace(hubNetworkSecurityGroupName, 'hub', 'identity')
+var identitySubnetName = replace(hubSubnetName, 'hub', 'identity')
+var operationsVirtualNetworkName = replace(hubVirtualNetworkName, 'hub', 'operations')
+var operationsNetworkSecurityGroupName = replace(hubNetworkSecurityGroupName, 'hub', 'operations')
+var operationsSubnetName = replace(hubSubnetName, 'hub', 'operations')
+var sharedServicesVirtualNetworkName = replace(hubVirtualNetworkName, 'hub', 'sharedServices')
+var sharedServicesNetworkSecurityGroupName = replace(hubNetworkSecurityGroupName, 'hub', 'sharedServices')
+var sharedServicesSubnetName = replace(hubSubnetName, 'hub', 'sharedServices')
+var spokes = [
+  {
+    name: 'operations'
+    subscriptionId: operationsSubscriptionId
+    resourceGroupName: operationsResourceGroupName
+    location: operationsLocation
+    logStorageAccountName: operationsLogStorageAccountName
+    logStorageSkuName: operationsLogStorageSkuName
+    virtualNetworkName: operationsVirtualNetworkName
+    virtualNetworkAddressPrefix: operationsVirtualNetworkAddressPrefix
+    virtualNetworkDiagnosticsLogs: operationsVirtualNetworkDiagnosticsLogs
+    virtualNetworkDiagnosticsMetrics: operationsVirtualNetworkDiagnosticsMetrics
+    networkSecurityGroupName: operationsNetworkSecurityGroupName
+    networkSecurityGroupRules: operationsNetworkSecurityGroupRules
+    networkSecurityGroupDiagnosticsLogs: operationsNetworkSecurityGroupDiagnosticsLogs
+    networkSecurityGroupDiagnosticsMetrics: operationsNetworkSecurityGroupDiagnosticsMetrics
+    subnetName: operationsSubnetName
+    subnetAddressPrefix: operationsSubnetAddressPrefix
+    subnetServiceEndpoints: operationsSubnetServiceEndpoints
+  }
+  {
+    name: 'identity'
+    subscriptionId: identitySubscriptionId
+    resourceGroupName: identityResourceGroupName
+    location: identityLocation
+    logStorageAccountName: identityLogStorageAccountName
+    logStorageSkuName: identityLogStorageSkuName
+    virtualNetworkName: identityVirtualNetworkName
+    virtualNetworkAddressPrefix: identityVirtualNetworkAddressPrefix
+    virtualNetworkDiagnosticsLogs: identityVirtualNetworkDiagnosticsLogs
+    virtualNetworkDiagnosticsMetrics: identityVirtualNetworkDiagnosticsMetrics
+    networkSecurityGroupName: identityNetworkSecurityGroupName
+    networkSecurityGroupRules: identityNetworkSecurityGroupRules
+    networkSecurityGroupDiagnosticsLogs: identityNetworkSecurityGroupDiagnosticsLogs
+    networkSecurityGroupDiagnosticsMetrics: identityNetworkSecurityGroupDiagnosticsMetrics
+    subnetName: identitySubnetName
+    subnetAddressPrefix: identitySubnetAddressPrefix
+    subnetServiceEndpoints: identitySubnetServiceEndpoints
+  }
+  {
+    name: 'sharedServices'
+    subscriptionId: sharedServicesSubscriptionId
+    resourceGroupName: sharedServicesResourceGroupName
+    location: sharedServicesLocation
+    logStorageAccountName: sharedServicesLogStorageAccountName
+    logStorageSkuName: sharedServicesLogStorageSkuName
+    virtualNetworkName: sharedServicesVirtualNetworkName
+    virtualNetworkAddressPrefix: sharedServicesVirtualNetworkAddressPrefix
+    virtualNetworkDiagnosticsLogs: sharedServicesVirtualNetworkDiagnosticsLogs
+    virtualNetworkDiagnosticsMetrics: sharedServicesVirtualNetworkDiagnosticsMetrics
+    networkSecurityGroupName: sharedServicesNetworkSecurityGroupName
+    networkSecurityGroupRules: sharedServicesNetworkSecurityGroupRules
+    networkSecurityGroupDiagnosticsLogs: sharedServicesNetworkSecurityGroupDiagnosticsLogs
+    networkSecurityGroupDiagnosticsMetrics: sharedServicesNetworkSecurityGroupDiagnosticsMetrics
+    subnetName: sharedServicesSubnetName
+    subnetAddressPrefix: sharedServicesSubnetAddressPrefix
+    subnetServiceEndpoints: sharedServicesSubnetServiceEndpoints
+  }
+]
+
 // main
 
 //// scaffolding
@@ -11,6 +342,7 @@ module hubResourceGroup './modules/resourceGroup.bicep' = {
   params: {
     name: hubResourceGroupName
     location: hubLocation
+    tags: tags
   }
 }
 
@@ -298,323 +630,6 @@ module remoteAccess './modules/remoteAccess.bicep' = if(deployRemoteAccess) {
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.outputs.id
   }
 }
-
-// parameters
-
-@minLength(3)
-@maxLength(24)
-@description('A name (3-24 alphanumeric characters in length without whitespace) used to prefix resources and generate uniqueness for resources with globally unique naming requirements like Storage Accounts and Log Analytics Workspaces')
-param resourcePrefix string = 'mlz-${uniqueId}'
-param hubSubscriptionId string = subscription().subscriptionId
-param identitySubscriptionId string = hubSubscriptionId
-param operationsSubscriptionId string = hubSubscriptionId
-param sharedServicesSubscriptionId string = hubSubscriptionId
-
-@allowed([
-  'Standard'
-  'Premium'
-])
-param firewallSkuTier string = 'Premium'
-
-param hubResourceGroupName string = '${resourcePrefix}-hub'
-param hubLocation string = deployment().location
-param hubVirtualNetworkName string = 'hub-vnet'
-param hubSubnetName string = 'hub-subnet'
-param hubVirtualNetworkAddressPrefix string = '10.0.100.0/24'
-param hubSubnetAddressPrefix string = '10.0.100.128/27'
-param hubVirtualNetworkDiagnosticsLogs array = []
-param hubVirtualNetworkDiagnosticsMetrics array = []
-param hubNetworkSecurityGroupName string = 'hub-nsg'
-param hubNetworkSecurityGroupRules array = [
-  {
-    name: 'allow_ssh'
-    properties: {
-      description: 'Allow SSH access from anywhere'
-      access: 'Allow'
-      priority: 100
-      protocol: 'Tcp'
-      direction: 'Inbound'
-      sourcePortRange: '*'
-      sourceAddressPrefix: '*'
-      destinationPortRange: '22'
-      destinationAddressPrefix: '*'
-    }
-  }
-  {
-    name: 'allow_rdp'
-    properties: {
-      description: 'Allow RDP access from anywhere'
-      access: 'Allow'
-      priority: 200
-      protocol: 'Tcp'
-      direction: 'Inbound'
-      sourcePortRange: '*'
-      sourceAddressPrefix: '*'
-      destinationPortRange: '3389'
-      destinationAddressPrefix: '*'
-    }
-  }
-]
-param hubNetworkSecurityGroupDiagnosticsLogs array = [
-  {
-    category: 'NetworkSecurityGroupEvent'
-    enabled: true
-  }
-  {
-    category: 'NetworkSecurityGroupRuleCounter'
-    enabled: true
-  }
-]
-param hubNetworkSecurityGroupDiagnosticsMetrics array = []
-param hubSubnetServiceEndpoints array = [
-  {
-    service: 'Microsoft.Storage'
-  }
-]
-param hubLogStorageAccountName string = toLower(take('hublogs${uniqueId}', 24))
-param hubLogStorageSkuName string = 'Standard_GRS'
-
-param firewallName string = 'firewall'
-param firewallManagementSubnetAddressPrefix string = '10.0.100.64/26'
-param firewallClientSubnetAddressPrefix string = '10.0.100.0/26'
-param firewallPolicyName string = 'firewall-policy'
-param firewallThreatIntelMode string = 'Alert'
-param firewallDiagnosticsLogs array = [
-  {
-    category: 'AzureFirewallApplicationRule'
-    enabled: true
-  }
-  {
-    category: 'AzureFirewallNetworkRule'
-    enabled: true
-  }
-  {
-    category: 'AzureFirewallDnsProxy'
-    enabled: true
-  }
-]
-param firewallDiagnosticsMetrics array = [
-  {
-    category: 'AllMetrics'
-    enabled: true
-  }
-]
-var firewallClientSubnetName = 'AzureFirewallSubnet' //this must be 'AzureFirewallSubnet'
-param firewallClientIpConfigurationName string = 'firewall-client-ip-config'
-param firewallClientSubnetServiceEndpoints array = []
-param firewallClientPublicIPAddressName string = 'firewall-client-public-ip'
-param firewallClientPublicIPAddressSkuName string = 'Standard'
-param firewallClientPublicIpAllocationMethod string = 'Static'
-param firewallClientPublicIPAddressAvailabilityZones array = []
-var firewallManagementSubnetName = 'AzureFirewallManagementSubnet' //this must be 'AzureFirewallManagementSubnet'
-param firewallManagementIpConfigurationName string = 'firewall-management-ip-config'
-param firewallManagementSubnetServiceEndpoints array = []
-param firewallManagementPublicIPAddressName string = 'firewall-management-public-ip'
-param firewallManagementPublicIPAddressSkuName string = 'Standard'
-param firewallManagementPublicIpAllocationMethod string = 'Static'
-param firewallManagementPublicIPAddressAvailabilityZones array = []
-param publicIPAddressDiagnosticsLogs array = [
-  {
-    category: 'DDoSProtectionNotifications'
-    enabled: true
-  }
-  {
-    category: 'DDoSMitigationFlowLogs'
-    enabled: true
-  }
-  {
-    category: 'DDoSMitigationReports'
-    enabled: true
-  }
-]
-param publicIPAddressDiagnosticsMetrics array = [
-  {
-    category: 'AllMetrics'
-    enabled: true
-  }
-]
-
-param identityResourceGroupName string = replace(hubResourceGroupName, 'hub', 'identity')
-param identityLocation string = hubLocation
-param identityVirtualNetworkName string = replace(hubVirtualNetworkName, 'hub', 'identity')
-param identitySubnetName string = replace(hubSubnetName, 'hub', 'identity')
-param identityVirtualNetworkAddressPrefix string = '10.0.110.0/26'
-param identitySubnetAddressPrefix string = '10.0.110.0/27'
-param identityVirtualNetworkDiagnosticsLogs array = hubVirtualNetworkDiagnosticsLogs
-param identityVirtualNetworkDiagnosticsMetrics array = hubVirtualNetworkDiagnosticsMetrics
-param identityNetworkSecurityGroupName string = replace(hubNetworkSecurityGroupName, 'hub', 'identity')
-param identityNetworkSecurityGroupRules array = hubNetworkSecurityGroupRules
-param identityNetworkSecurityGroupDiagnosticsLogs array = hubNetworkSecurityGroupDiagnosticsLogs
-param identityNetworkSecurityGroupDiagnosticsMetrics array = hubNetworkSecurityGroupDiagnosticsMetrics
-param identitySubnetServiceEndpoints array = hubSubnetServiceEndpoints
-param identityLogStorageAccountName string = toLower(take('idlogs${uniqueId}', 24))
-param identityLogStorageSkuName string = hubLogStorageSkuName
-
-param operationsResourceGroupName string = replace(hubResourceGroupName, 'hub', 'operations')
-param operationsLocation string = hubLocation
-param operationsVirtualNetworkName string = replace(hubVirtualNetworkName, 'hub', 'operations')
-param operationsVirtualNetworkAddressPrefix string = '10.0.115.0/26'
-param operationsVirtualNetworkDiagnosticsLogs array = hubVirtualNetworkDiagnosticsLogs
-param operationsVirtualNetworkDiagnosticsMetrics array = hubVirtualNetworkDiagnosticsMetrics
-param operationsNetworkSecurityGroupName string = replace(hubNetworkSecurityGroupName, 'hub', 'operations')
-param operationsNetworkSecurityGroupRules array = hubNetworkSecurityGroupRules
-param operationsNetworkSecurityGroupDiagnosticsLogs array = hubNetworkSecurityGroupDiagnosticsLogs
-param operationsNetworkSecurityGroupDiagnosticsMetrics array = hubNetworkSecurityGroupDiagnosticsMetrics
-param operationsSubnetName string = replace(hubSubnetName, 'hub', 'operations')
-param operationsSubnetAddressPrefix string = '10.0.115.0/27'
-param operationsSubnetServiceEndpoints array = hubSubnetServiceEndpoints
-param operationsLogStorageAccountName string = toLower(take('opslogs${uniqueId}', 24))
-param operationsLogStorageSkuName string = hubLogStorageSkuName
-
-param sharedServicesResourceGroupName string = replace(hubResourceGroupName, 'hub', 'sharedServices')
-param sharedServicesLocation string = hubLocation
-param sharedServicesVirtualNetworkName string = replace(hubVirtualNetworkName, 'hub', 'sharedServices')
-param sharedServicesSubnetName string = replace(hubSubnetName, 'hub', 'sharedServices')
-param sharedServicesVirtualNetworkAddressPrefix string = '10.0.120.0/26'
-param sharedServicesSubnetAddressPrefix string = '10.0.120.0/27'
-param sharedServicesVirtualNetworkDiagnosticsLogs array = hubVirtualNetworkDiagnosticsLogs
-param sharedServicesVirtualNetworkDiagnosticsMetrics array = hubVirtualNetworkDiagnosticsMetrics
-param sharedServicesNetworkSecurityGroupName string = replace(hubNetworkSecurityGroupName, 'hub', 'sharedServices')
-param sharedServicesNetworkSecurityGroupRules array = hubNetworkSecurityGroupRules
-param sharedServicesNetworkSecurityGroupDiagnosticsLogs array = hubNetworkSecurityGroupDiagnosticsLogs
-param sharedServicesNetworkSecurityGroupDiagnosticsMetrics array = hubNetworkSecurityGroupDiagnosticsMetrics
-param sharedServicesSubnetServiceEndpoints array = hubSubnetServiceEndpoints
-param sharedServicesLogStorageAccountName string = toLower(take('shrdSvclogs${uniqueId}', 24))
-param sharedServicesLogStorageSkuName string = hubLogStorageSkuName
-
-param logAnalyticsWorkspaceName string = take('${resourcePrefix}-laws', 63)
-param logAnalyticsWorkspaceLocation string = operationsLocation
-param logAnalyticsWorkspaceCappingDailyQuotaGb int = -1
-param logAnalyticsWorkspaceRetentionInDays int = 30
-param logAnalyticsWorkspaceSkuName string = 'PerGB2018'
-@description('When set to "True", enables Microsoft Sentinel within the MLZ Log Analytics workspace.')
-param deploySentinel bool = false
-
-@allowed([
-  'NIST'
-  'IL5' // AzureUsGoverment only, trying to deploy IL5 in AzureCloud will switch to NIST
-  'CMMC'
-])
-@description('[NIST/IL5/CMMC] Built-in policy assignments to assign, default is NIST. IL5 is only available for AzureUsGovernment and will switch to NIST if tried in AzureCloud.')
-param policy string = 'NIST'
-param deployPolicy bool = false
-
-@description('Email address of the contact, in the form of john@doe.com')
-param emailSecurityContact string = ''
-param deployASC bool = false
-
-@description('Provision Azure Bastion Host and jumpboxes in this deployment')
-param deployRemoteAccess bool = false
-param bastionHostName string = 'bastionHost'
-param bastionHostSubnetAddressPrefix string = '10.0.100.160/27'
-param bastionHostPublicIPAddressName string = 'bastionHostPublicIPAddress'
-param bastionHostPublicIPAddressSkuName string = 'Standard'
-param bastionHostPublicIPAddressAllocationMethod string = 'Static'
-param bastionHostPublicIPAddressAvailabilityZones array = []
-param bastionHostIPConfigurationName string = 'bastionHostIPConfiguration'
-param linuxNetworkInterfaceName string = 'linuxVmNetworkInterface'
-param linuxNetworkInterfaceIpConfigurationName string = 'linuxVmIpConfiguration'
-param linuxNetworkInterfacePrivateIPAddressAllocationMethod string = 'Dynamic'
-param linuxVmName string = 'linuxVirtualMachine'
-param linuxVmSize string = 'Standard_B2s'
-param linuxVmOsDiskCreateOption string = 'FromImage'
-param linuxVmOsDiskType string = 'Standard_LRS'
-param linuxVmImagePublisher string = 'Canonical'
-param linuxVmImageOffer string = 'UbuntuServer'
-param linuxVmImageSku string = '18.04-LTS'
-param linuxVmImageVersion string = 'latest'
-param linuxVmAdminUsername string = 'azureuser'
-@allowed([
-  'sshPublicKey'
-  'password'
-])
-param linuxVmAuthenticationType string = 'password'
-@secure()
-@minLength(14)
-param linuxVmAdminPasswordOrKey string = deployRemoteAccess ? '' : newGuid()
-param windowsNetworkInterfaceName string = 'windowsVmNetworkInterface'
-param windowsNetworkInterfaceIpConfigurationName string = 'windowsVmIpConfiguration'
-param windowsNetworkInterfacePrivateIPAddressAllocationMethod string = 'Dynamic'
-param windowsVmName string = 'windowsVm'
-param windowsVmSize string = 'Standard_DS1_v2'
-param windowsVmAdminUsername string = 'azureuser'
-@secure()
-@minLength(14)
-param windowsVmAdminPassword string = deployRemoteAccess ? '' : newGuid()
-param windowsVmPublisher string = 'MicrosoftWindowsServer'
-param windowsVmOffer string = 'WindowsServer'
-param windowsVmSku string = '2019-datacenter'
-param windowsVmVersion string = 'latest'
-param windowsVmCreateOption string = 'FromImage'
-param windowsVmStorageAccountType string = 'StandardSSD_LRS'
-
-param tags object = {
-  'resourcePrefix': resourcePrefix
-  'DeploymentType': 'MissionLandingZoneARM'
-}
-
-param uniqueId string = uniqueString(deployment().name)
-param nowUtc string = utcNow()
-
-var spokes = [
-  {
-    name: 'operations'
-    subscriptionId: operationsSubscriptionId
-    resourceGroupName: operationsResourceGroupName
-    location: operationsLocation
-    logStorageAccountName: operationsLogStorageAccountName
-    logStorageSkuName: operationsLogStorageSkuName
-    virtualNetworkName: operationsVirtualNetworkName
-    virtualNetworkAddressPrefix: operationsVirtualNetworkAddressPrefix
-    virtualNetworkDiagnosticsLogs: operationsVirtualNetworkDiagnosticsLogs
-    virtualNetworkDiagnosticsMetrics: operationsVirtualNetworkDiagnosticsMetrics
-    networkSecurityGroupName: operationsNetworkSecurityGroupName
-    networkSecurityGroupRules: operationsNetworkSecurityGroupRules
-    networkSecurityGroupDiagnosticsLogs: operationsNetworkSecurityGroupDiagnosticsLogs
-    networkSecurityGroupDiagnosticsMetrics: operationsNetworkSecurityGroupDiagnosticsMetrics
-    subnetName: operationsSubnetName
-    subnetAddressPrefix: operationsSubnetAddressPrefix
-    subnetServiceEndpoints: operationsSubnetServiceEndpoints
-  }
-  {
-    name: 'identity'
-    subscriptionId: identitySubscriptionId
-    resourceGroupName: identityResourceGroupName
-    location: identityLocation
-    logStorageAccountName: identityLogStorageAccountName
-    logStorageSkuName: identityLogStorageSkuName
-    virtualNetworkName: identityVirtualNetworkName
-    virtualNetworkAddressPrefix: identityVirtualNetworkAddressPrefix
-    virtualNetworkDiagnosticsLogs: identityVirtualNetworkDiagnosticsLogs
-    virtualNetworkDiagnosticsMetrics: identityVirtualNetworkDiagnosticsMetrics
-    networkSecurityGroupName: identityNetworkSecurityGroupName
-    networkSecurityGroupRules: identityNetworkSecurityGroupRules
-    networkSecurityGroupDiagnosticsLogs: identityNetworkSecurityGroupDiagnosticsLogs
-    networkSecurityGroupDiagnosticsMetrics: identityNetworkSecurityGroupDiagnosticsMetrics
-    subnetName: identitySubnetName
-    subnetAddressPrefix: identitySubnetAddressPrefix
-    subnetServiceEndpoints: identitySubnetServiceEndpoints
-  }
-  {
-    name: 'sharedServices'
-    subscriptionId: sharedServicesSubscriptionId
-    resourceGroupName: sharedServicesResourceGroupName
-    location: sharedServicesLocation
-    logStorageAccountName: sharedServicesLogStorageAccountName
-    logStorageSkuName: sharedServicesLogStorageSkuName
-    virtualNetworkName: sharedServicesVirtualNetworkName
-    virtualNetworkAddressPrefix: sharedServicesVirtualNetworkAddressPrefix
-    virtualNetworkDiagnosticsLogs: sharedServicesVirtualNetworkDiagnosticsLogs
-    virtualNetworkDiagnosticsMetrics: sharedServicesVirtualNetworkDiagnosticsMetrics
-    networkSecurityGroupName: sharedServicesNetworkSecurityGroupName
-    networkSecurityGroupRules: sharedServicesNetworkSecurityGroupRules
-    networkSecurityGroupDiagnosticsLogs: sharedServicesNetworkSecurityGroupDiagnosticsLogs
-    networkSecurityGroupDiagnosticsMetrics: sharedServicesNetworkSecurityGroupDiagnosticsMetrics
-    subnetName: sharedServicesSubnetName
-    subnetAddressPrefix: sharedServicesSubnetAddressPrefix
-    subnetServiceEndpoints: sharedServicesSubnetServiceEndpoints
-  }
-]
 
 // outputs
 

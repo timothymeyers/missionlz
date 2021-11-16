@@ -1,0 +1,158 @@
+{
+    "eastasia" : {
+        "prefix": "ea"
+    },
+    "southeastasia" : {
+        "prefix": "sa"
+    },
+    "centralus" : {
+        "prefix": "cus"
+    },
+    "eastus" : {
+        "prefix": "eus"
+    },
+    "eastus2" : {
+        "prefix": "eus2"
+    },
+    "westus" : {
+        "prefix": "wus"
+    },
+    "northcentralus" : {
+        "prefix": "ncus"
+    },
+    "southcentralus" : {
+        "prefix": "scus"
+    },
+    "northeurope" : {
+        "prefix": "ne"
+    },
+    "westeurope" : {
+        "prefix": "we"
+    },
+    "japanwest" : {
+        "prefix": "jw"
+    },
+    "japaneast" : {
+        "prefix": "je"
+    },
+    "brazilsouth" : {
+        "prefix": "bs"
+    },
+    "australiaeast" : {
+        "prefix": "ae"
+    },
+    "australiasoutheast" : {
+        "prefix": "ase"
+    },
+    "southindia" : {
+        "prefix": "si"
+    },
+    "centralindia" : {
+        "prefix": "ci"
+    },
+    "westindia" : {
+        "prefix": "wi"
+    },
+    "canadacentral" : {
+        "prefix": "cc"
+    },
+    "canadaeast" : {
+        "prefix": "ce"
+    },
+    "uksouth" : {
+        "prefix": "uks"
+    },
+    "ukwest" : {
+        "prefix": "ukw"
+    },
+    "westcentralus" : {
+        "prefix": "wcus"
+    },
+    "westus2" : {
+        "prefix": "wus2"
+    },
+    "koreacentral" : {
+        "prefix": "kc"
+    },
+    "koreasouth" : {
+        "prefix": "ks"
+    },
+    "francecentral" : {
+        "prefix": "fc"
+    },
+    "francesouth" : {
+        "prefix": "fs"
+    },
+    "australiacentral" : {
+        "prefix": "ac"
+    },
+    "australiacentral2" : {
+        "prefix": "ac2"
+    },
+    "uaecentral" : {
+        "prefix": "uaec"
+    },
+    "uaenorth" : {
+        "prefix": "uaen"
+    },
+    "southafricanorth" : {
+        "prefix": "san"
+    },
+    "southafricawest" : {
+        "prefix": "saw"
+    },
+    "switzerlandnorth" : {
+        "prefix": "swn"
+    },
+    "switzerlandwest" : {
+        "prefix": "sww"
+    },
+    "germanynorth" : {
+        "prefix": "gn"
+    },
+    "germanywestcentral" : {
+        "prefix": "gc"
+    },
+    "norwaywest" : {
+        "prefix": "nw"
+    },
+    "norwayeast" : {
+        "prefix": "ne"
+    },
+    "brazilsoutheast" : {
+        "prefix": "bsw"
+    },
+    "westus3" : {
+        "prefix": "wus3"
+    },
+    "swedencentral" : {
+        "prefix": "swec"
+    },
+    "usgovvirginia" : {
+        "prefix": "usv"
+    },
+    "usgovtexas" : {
+        "prefix": "ust"
+    },
+    "usgovarizona" : {
+        "prefix": "usa"
+    },
+    "usdodcentral" : {
+        "prefix": "usdc"
+    },
+    "usdodeast" : {
+        "prefix": "usde"
+    },
+    "usgoviowa" : {
+        "prefix": "usi"
+    },
+    "usseceast" : {
+        "prefix": "sece"
+    },
+    "ussecwest" : {
+        "prefix": "secw"
+    },
+    "ussecwestcentral" : {
+        "prefix": "secwc"
+    }
+}
