@@ -1,0 +1,376 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.4.1008.15138",
+      "templateHash": "12893902301468717073"
+    }
+  },
+  "parameters": {
+    "mlzDeploymentVariables": {
+      "type": "object",
+      "defaultValue": "[json('{\r\n  \"mlzResourcePrefix\": {\r\n    \"Type\": \"String\",\r\n    \"Value\": \"contoso\"\r\n  },\r\n  \"mlzKeyVault\": {\r\n    \"Type\":\"Object\",\r\n    \"Value\": {\r\n      \"keyVaultName\": \"contoso-eastus-kv\",\r\n      \"keyVaultResourceGroup\": \"contoso-sharedServices\",\r\n      \"keyVaultSubid\": \"ddf87969-a498-4676-a488-1932fbc5a306\"\r\n    }\r\n  },\r\n  \"mlzAppServicePlan\": {\r\n    \"Type\":\"Object\",\r\n    \"Value\": {\r\n      \"appServicePlanName\": \"contoso-asp\",\r\n      \"appServicePlanResourceGroup\": \"contoso-sharedServices\",\r\n      \"appServicePlanSubId\": \"ddf87969-a498-4676-a488-1932fbc5a306\"\r\n    }\r\n  },\r\n  \"mlzContainerRegistry\": {\r\n    \"Type\":\"Object\",\r\n    \"Value\": {\r\n      \"containerRegistryName\": \"contosoeastusacr\",\r\n      \"containerRegistryResourceGroup\": \"contoso-sharedServices\",\r\n      \"containerRegistrySubId\": \"ddf87969-a498-4676-a488-1932fbc5a306\"\r\n    }\r\n  },\r\n  \"firewallPrivateIPAddress\": {\r\n    \"Type\": \"String\",\r\n    \"Value\": \"10.0.100.4\"\r\n  },\r\n  \"hub\": {\r\n    \"Type\": \"Object\",\r\n    \"Value\": {\r\n      \"subscriptionId\": \"ddf87969-a498-4676-a488-1932fbc5a306\",\r\n      \"resourceGroupName\": \"contoso-hub\",\r\n      \"resourceGroupResourceId\": \"/subscriptions/ddf87969-a498-4676-a488-1932fbc5a306/resourceGroups/contoso-hub\",\r\n      \"virtualNetworkName\": \"hub-vnet\",\r\n      \"virtualNetworkResourceId\": \"/subscriptions/ddf87969-a498-4676-a488-1932fbc5a306/resourceGroups/contoso-hub/providers/Microsoft.Network/virtualNetworks/hub-vnet\",\r\n      \"subnetName\": \"hub-vnet/hub-subnet\",\r\n      \"subnetResourceId\": \"/subscriptions/ddf87969-a498-4676-a488-1932fbc5a306/resourceGroups/contoso-hub/providers/Microsoft.Network/virtualNetworks/hub-vnet/subnets/hub-subnet\",\r\n      \"subnetAddressPrefix\": \"10.0.100.128/27\",\r\n      \"networkSecurityGroupName\": \"hub-nsg\",\r\n      \"networkSecurityGroupResourceId\": \"/subscriptions/ddf87969-a498-4676-a488-1932fbc5a306/resourceGroups/contoso-hub/providers/Microsoft.Network/networkSecurityGroups/hub-nsg\"\r\n    }\r\n  },\r\n  \"logAnalyticsWorkspaceName\": {\r\n    \"Type\": \"String\",\r\n    \"Value\": \"contoso-laws\"\r\n  },\r\n  \"logAnalyticsWorkspaceResourceId\": {\r\n    \"Type\": \"String\",\r\n    \"Value\": \"/subscriptions/ddf87969-a498-4676-a488-1932fbc5a306/resourceGroups/contoso-operations/providers/Microsoft.OperationalInsights/workspaces/contoso-laws\"\r\n  },\r\n  \"spokes\": {\r\n    \"Type\": \"Array\",\r\n    \"Value\": [\r\n      {\r\n        \"name\": \"operations\",\r\n        \"subscriptionId\": \"ddf87969-a498-4676-a488-1932fbc5a306\",\r\n        \"resourceGroupName\": \"contoso-operations\",\r\n        \"resourceGroupId\": \"/subscriptions/ddf87969-a498-4676-a488-1932fbc5a306/resourceGroups/contoso-operations\",\r\n        \"virtualNetworkName\": \"operations-vnet\",\r\n        \"virtualNetworkResourceId\": \"/subscriptions/ddf87969-a498-4676-a488-1932fbc5a306/resourceGroups/contoso-operations/providers/Microsoft.Network/virtualNetworks/operations-vnet\",\r\n        \"subnetName\": \"operations-subnet\",\r\n        \"subnetResourceId\": \"/subscriptions/ddf87969-a498-4676-a488-1932fbc5a306/resourceGroups/contoso-operations/providers/Microsoft.Network/virtualNetworks/operations-vnet/subnets/operations-subnet\",\r\n        \"subnetAddressPrefix\": \"10.0.115.0/27\",\r\n        \"networkSecurityGroupName\": \"operations-nsg\",\r\n        \"networkSecurityGroupResourceId\": \"/subscriptions/ddf87969-a498-4676-a488-1932fbc5a306/resourceGroups/contoso-operations/providers/Microsoft.Network/networkSecurityGroups/operations-nsg\"\r\n      },\r\n      {\r\n        \"name\": \"identity\",\r\n        \"subscriptionId\": \"ddf87969-a498-4676-a488-1932fbc5a306\",\r\n        \"resourceGroupName\": \"contoso-identity\",\r\n        \"resourceGroupId\": \"/subscriptions/ddf87969-a498-4676-a488-1932fbc5a306/resourceGroups/contoso-identity\",\r\n        \"virtualNetworkName\": \"identity-vnet\",\r\n        \"virtualNetworkResourceId\": \"/subscriptions/ddf87969-a498-4676-a488-1932fbc5a306/resourceGroups/contoso-identity/providers/Microsoft.Network/virtualNetworks/identity-vnet\",\r\n        \"subnetName\": \"identity-subnet\",\r\n        \"subnetResourceId\": \"/subscriptions/ddf87969-a498-4676-a488-1932fbc5a306/resourceGroups/contoso-identity/providers/Microsoft.Network/virtualNetworks/identity-vnet/subnets/identity-subnet\",\r\n        \"subnetAddressPrefix\": \"10.0.110.0/27\",\r\n        \"networkSecurityGroupName\": \"identity-nsg\",\r\n        \"networkSecurityGroupResourceId\": \"/subscriptions/ddf87969-a498-4676-a488-1932fbc5a306/resourceGroups/contoso-identity/providers/Microsoft.Network/networkSecurityGroups/identity-nsg\"\r\n      },\r\n      {\r\n        \"name\": \"sharedServices\",\r\n        \"subscriptionId\": \"ddf87969-a498-4676-a488-1932fbc5a306\",\r\n        \"resourceGroupName\": \"contoso-sharedServices\",\r\n        \"resourceGroupId\": \"/subscriptions/ddf87969-a498-4676-a488-1932fbc5a306/resourceGroups/contoso-sharedServices\",\r\n        \"virtualNetworkName\": \"sharedServices-vnet\",\r\n        \"virtualNetworkResourceId\": \"/subscriptions/ddf87969-a498-4676-a488-1932fbc5a306/resourceGroups/contoso-sharedServices/providers/Microsoft.Network/virtualNetworks/sharedServices-vnet\",\r\n        \"subnetName\": \"sharedServices-subnet\",\r\n        \"subnetResourceId\": \"/subscriptions/ddf87969-a498-4676-a488-1932fbc5a306/resourceGroups/contoso-sharedServices/providers/Microsoft.Network/virtualNetworks/sharedServices-vnet/subnets/sharedServices-subnet\",\r\n        \"subnetAddressPrefix\": \"10.0.120.0/27\",\r\n        \"networkSecurityGroupName\": \"sharedServices-nsg\",\r\n        \"networkSecurityGroupResourceId\": \"/subscriptions/ddf87969-a498-4676-a488-1932fbc5a306/resourceGroups/contoso-sharedServices/providers/Microsoft.Network/networkSecurityGroups/sharedServices-nsg\"\r\n      }\r\n    ]\r\n  }\r\n}\r\n')]"
+    },
+    "keyVaultName": {
+      "type": "string",
+      "defaultValue": "[format('{0}', parameters('mlzDeploymentVariables').mlzKeyVault.Value.keyVaultName)]",
+      "metadata": {
+        "description": "The name of the key vault to utilize in support of this deployment.  If unspecified, the template will attempt to use the value from mlzDeploymentVariabes."
+      }
+    },
+    "keyVaultResourceGroup": {
+      "type": "string",
+      "defaultValue": "[format('{0}', parameters('mlzDeploymentVariables').mlzKeyVault.Value.keyVaultResourceGroup)]",
+      "metadata": {
+        "description": "The name of the key vault resource group to utilize in support of this deployment.  If unspecified, the template will attempt to use value from mlzDeploymentVariabes."
+      }
+    },
+    "keyVaultSubId": {
+      "type": "string",
+      "defaultValue": "[format('{0}', parameters('mlzDeploymentVariables').mlzKeyVault.Value.keyVaultSubid)]",
+      "metadata": {
+        "description": "The Azure subscription Id where the key vault is deployed.  If unspecified, the template will attempt to use the value from mlzDeploymentVariabes."
+      }
+    },
+    "appServicePlanName": {
+      "type": "string",
+      "defaultValue": "[format('{0}', parameters('mlzDeploymentVariables').mlzAppServicePlan.Value.appServicePlanName)]",
+      "metadata": {
+        "description": "The name of the app service plan to utilize in support of this deployment.  If unspecified, the template will attempt to use the value from mlzDeploymentVariables"
+      }
+    },
+    "appServicePlanResourceGroup": {
+      "type": "string",
+      "defaultValue": "[format('{0}', parameters('mlzDeploymentVariables').mlzAppServicePlan.Value.appServicePlanResourceGroup)]",
+      "metadata": {
+        "description": "The name of the app service plan resource group to utilize in support of this deployment.  If unspecified, the template will attempt to use value from mlzDeploymentVariabes."
+      }
+    },
+    "appServicePlanSubId": {
+      "type": "string",
+      "defaultValue": "[format('{0}', parameters('mlzDeploymentVariables').mlzAppServicePlan.Value.appServicePlanSubId)]",
+      "metadata": {
+        "description": "The Azure subscription Id where the app service plan is deployed. If unspecified, the template will attempt to use value from mlzDeploymentVariabes."
+      }
+    },
+    "containerBaseImageName": {
+      "type": "string",
+      "defaultValue": "nginx",
+      "metadata": {
+        "description": "The basic name of the container image which is loaded into your Azure Container Registry.  For example, a base container name would be \"nginx\""
+      }
+    },
+    "containerImageTag": {
+      "type": "string",
+      "defaultValue": "latest",
+      "metadata": {
+        "description": "The image tag for the container image which will be deployed as part of this deployment.  An example image tag might be \"latest\"."
+      }
+    }
+  },
+  "functions": [],
+  "variables": {
+    "dockerImageName": "[format('{0}:{1}', parameters('containerBaseImageName'), parameters('containerImageTag'))]",
+    "appServiceAppName": "[format('{0}-{1}', parameters('mlzDeploymentVariables').mlzResourcePrefix.Value, parameters('containerBaseImageName'))]",
+    "managedIdenityRoleGUID": "b24988ac-6180-42a0-ab88-20f7382dd24c"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2020-04-01-preview",
+      "name": "[guid(format('{0}{1}', subscription().displayName, deployment().name))]",
+      "properties": {
+        "principalId": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('appServicePlanSubId'), parameters('appServicePlanResourceGroup')), 'Microsoft.Resources/deployments', 'deployScriptUserManagedId'), '2020-06-01').outputs.userPrincipalId.value]",
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('managedIdenityRoleGUID'))]"
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('appServicePlanSubId'), parameters('appServicePlanResourceGroup')), 'Microsoft.Resources/deployments', 'deployScriptUserManagedId')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "name": "[parameters('containerBaseImageName')]",
+      "resourceGroup": "[parameters('keyVaultResourceGroup')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "appServiceAppName": {
+            "value": "[variables('appServiceAppName')]"
+          },
+          "dockerRegistryPassword": {
+            "reference": {
+              "keyVault": {
+                "id": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('keyVaultSubId'), parameters('keyVaultResourceGroup')), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+              },
+              "secretName": "dockerRegistryPassword"
+            }
+          },
+          "dockerRegistryUrl": {
+            "reference": {
+              "keyVault": {
+                "id": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('keyVaultSubId'), parameters('keyVaultResourceGroup')), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+              },
+              "secretName": "dockerRegistryUrl"
+            }
+          },
+          "dockerRegistryUsername": {
+            "reference": {
+              "keyVault": {
+                "id": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('keyVaultSubId'), parameters('keyVaultResourceGroup')), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+              },
+              "secretName": "dockerRegistryUsername"
+            }
+          },
+          "appServicePlanName": {
+            "value": "[parameters('appServicePlanName')]"
+          },
+          "appServicePlanRGName": {
+            "value": "[parameters('appServicePlanResourceGroup')]"
+          },
+          "appServicePlanSubId": {
+            "value": "[parameters('appServicePlanSubId')]"
+          },
+          "dockerImageName": {
+            "value": "[variables('dockerImageName')]"
+          },
+          "userManagedPrincipalId": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('appServicePlanSubId'), parameters('appServicePlanResourceGroup')), 'Microsoft.Resources/deployments', 'deployScriptUserManagedId'), '2020-06-01').outputs.userResourceId.value]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1008.15138",
+              "templateHash": "4305736408291812357"
+            }
+          },
+          "parameters": {
+            "appServiceAppName": {
+              "type": "string"
+            },
+            "appServiceAppStagingSlotName": {
+              "type": "string",
+              "defaultValue": "staging"
+            },
+            "appServicePlanName": {
+              "type": "string"
+            },
+            "appServicePlanRGName": {
+              "type": "string"
+            },
+            "appServicePlanSubId": {
+              "type": "string"
+            },
+            "userManagedPrincipalId": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]"
+            },
+            "dockerImageName": {
+              "type": "string"
+            },
+            "dockerRegistryUrl": {
+              "type": "secureString"
+            },
+            "dockerRegistryUsername": {
+              "type": "secureString"
+            },
+            "dockerRegistryPassword": {
+              "type": "secureString"
+            }
+          },
+          "functions": [],
+          "variables": {
+            "dockerImage": "[format('Docker|{0}/{1}', parameters('dockerRegistryUrl'), parameters('dockerImageName'))]",
+            "webHookName": "[format('{0}', replace(format('{0}', parameters('appServiceAppName')), '-', ''))]",
+            "shortNameContainerRegistry": "[split(parameters('dockerRegistryUrl'), '.')]"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Web/sites/slots",
+              "apiVersion": "2021-02-01",
+              "name": "[format('{0}/{1}', parameters('appServiceAppName'), parameters('appServiceAppStagingSlotName'))]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "serverFarmId": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('appServicePlanSubId'), parameters('appServicePlanRGName')), 'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+                "siteConfig": {
+                  "appSettings": [
+                    {
+                      "name": "DOCKER_REGISTRY_SERVER_URL",
+                      "value": "[parameters('dockerRegistryUrl')]"
+                    },
+                    {
+                      "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+                      "value": "[parameters('dockerRegistryUsername')]"
+                    },
+                    {
+                      "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+                      "value": "[parameters('dockerRegistryPassword')]"
+                    },
+                    {
+                      "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+                      "value": "false"
+                    }
+                  ],
+                  "linuxFxVersion": "[variables('dockerImage')]",
+                  "alwaysOn": true
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('appServiceAppName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Web/sites",
+              "apiVersion": "2021-02-01",
+              "name": "[parameters('appServiceAppName')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "serverFarmId": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('appServicePlanSubId'), parameters('appServicePlanRGName')), 'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+                "httpsOnly": true,
+                "siteConfig": {
+                  "appSettings": [
+                    {
+                      "name": "DOCKER_REGISTRY_SERVER_URL",
+                      "value": "[parameters('dockerRegistryUrl')]"
+                    },
+                    {
+                      "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+                      "value": "[parameters('dockerRegistryUsername')]"
+                    },
+                    {
+                      "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+                      "value": "[parameters('dockerRegistryPassword')]"
+                    },
+                    {
+                      "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+                      "value": "false"
+                    }
+                  ],
+                  "linuxFxVersion": "[variables('dockerImage')]",
+                  "alwaysOn": true
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deploymentScripts",
+              "apiVersion": "2020-10-01",
+              "name": "deployCI_CD_HookScript",
+              "location": "[parameters('location')]",
+              "kind": "AzureCLI",
+              "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                  "[format('{0}', parameters('userManagedPrincipalId'))]": {}
+                }
+              },
+              "properties": {
+                "azCliVersion": "2.28.0",
+                "cleanupPreference": "Always",
+                "arguments": "[format('{0} {1} {2} {3} {4}', parameters('appServiceAppName'), resourceGroup().name, parameters('dockerImageName'), variables('shortNameContainerRegistry')[0], variables('webHookName'))]",
+                "scriptContent": "      ci_cd_url=$(az webapp deployment container config --name $1 --resource-group $2 --slot staging --enable-cd true --query CI_CD_URL --output tsv);\r\n      result=$(az acr webhook create --name $5 --registry $4 --resource-group $2 --actions push --uri $ci_cd_url --scope $3)\r\n      ",
+                "retentionInterval": "PT1H"
+              }
+            }
+          ],
+          "outputs": {
+            "appServiceAppName": {
+              "type": "string",
+              "value": "[parameters('appServiceAppName')]"
+            },
+            "appServiceAppResourceGroup": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Web/sites', parameters('appServiceAppName'))).resourceGroup]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('appServicePlanSubId'), parameters('appServicePlanResourceGroup')), 'Microsoft.Resources/deployments', 'deployScriptUserManagedId')]",
+        "[subscriptionResourceId('Microsoft.Authorization/roleAssignments', guid(format('{0}{1}', subscription().displayName, deployment().name)))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "name": "deployScriptUserManagedId",
+      "subscriptionId": "[parameters('appServicePlanSubId')]",
+      "resourceGroup": "[parameters('appServicePlanResourceGroup')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "userManagedIdentityName": {
+            "value": "[format('{0}-deploy-contributor', subscription().displayName)]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1008.15138",
+              "templateHash": "558426158558908136"
+            }
+          },
+          "parameters": {
+            "userManagedIdentityName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]"
+            }
+          },
+          "functions": [],
+          "resources": [
+            {
+              "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+              "apiVersion": "2018-11-30",
+              "name": "[parameters('userManagedIdentityName')]",
+              "location": "[parameters('location')]"
+            }
+          ],
+          "outputs": {
+            "userResourceId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('userManagedIdentityName'))]"
+            },
+            "userPrincipalId": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('userManagedIdentityName'))).principalId]"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "managedIdenityId": {
+      "type": "string",
+      "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('appServicePlanSubId'), parameters('appServicePlanResourceGroup')), 'Microsoft.Resources/deployments', 'deployScriptUserManagedId'), '2020-06-01').outputs.userResourceId.value]"
+    },
+    "azureWebAppName": {
+      "type": "string",
+      "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('keyVaultResourceGroup')), 'Microsoft.Resources/deployments', parameters('containerBaseImageName')), '2020-06-01').outputs.appServiceAppName.value]"
+    },
+    "azureWebAppResourceGroupName": {
+      "type": "string",
+      "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('keyVaultResourceGroup')), 'Microsoft.Resources/deployments', parameters('containerBaseImageName')), '2020-06-01').outputs.appServiceAppResourceGroup.value]"
+    }
+  }
+}

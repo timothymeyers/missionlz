@@ -1,9 +1,11 @@
 param appServiceAppName string
 param appServiceAppStagingSlotName string = 'staging'
-param appServicePlanName string = 'jaiAppServicePlan'
-param appServicePlanRGName string = resourceGroup().name
+param appServicePlanName string
+param appServicePlanRGName string
+param appServicePlanSubId string
+param userManagedPrincipalId string
 param location string = resourceGroup().location
-param dockerImageName string = 'nginx:latest'
+param dockerImageName string
 @secure()
 param dockerRegistryUrl string
 @secure()
@@ -12,11 +14,12 @@ param dockerRegistryUsername string
 param dockerRegistryPassword string
 
 var dockerImage = 'Docker|${dockerRegistryUrl}/${dockerImageName}'
+var webHookName = '${replace('${appServiceAppName}','-','')}'
 var shortNameContainerRegistry = split(dockerRegistryUrl, '.')
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2020-12-01' existing = {
   name: appServicePlanName
-  scope: resourceGroup(appServicePlanRGName)
+  scope: resourceGroup(appServicePlanSubId, appServicePlanRGName)
 }
 
 resource appServiceApp 'Microsoft.Web/sites@2021-02-01' = {
@@ -78,6 +81,7 @@ resource appServiceApp 'Microsoft.Web/sites@2021-02-01' = {
     }
   }
 }
+
 resource deployCI_CD_HookScript 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
   name: 'deployCI_CD_HookScript'
   location: location
@@ -85,18 +89,21 @@ resource deployCI_CD_HookScript 'Microsoft.Resources/deploymentScripts@2020-10-0
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
-      '/subscriptions/97ee5f79-e968-4e81-9d67-921c0c107342/resourcegroups/jaitemp/providers/Microsoft.ManagedIdentity/userAssignedIdentities/jaiWebApp': {}
+      '${userManagedPrincipalId}': {}
     }
   }
   properties: {
     azCliVersion: '2.28.0'
     cleanupPreference: 'Always'
-    arguments: '${appServiceAppName} ${resourceGroup().name} ${dockerImageName} ${shortNameContainerRegistry[0]}'
+    arguments: '${appServiceAppName} ${resourceGroup().name} ${dockerImageName} ${shortNameContainerRegistry[0]} ${webHookName}'
     scriptContent: '''
       ci_cd_url=$(az webapp deployment container config --name $1 --resource-group $2 --slot staging --enable-cd true --query CI_CD_URL --output tsv);
-      result=$(az acr webhook create --name $1 --registry $4 --resource-group $2 --actions push --uri $ci_cd_url --scope $3)
+      result=$(az acr webhook create --name $5 --registry $4 --resource-group $2 --actions push --uri $ci_cd_url --scope $3)
       '''
 
     retentionInterval: 'PT1H'
   }
 }
+
+output appServiceAppName string = appServiceApp.name
+output appServiceAppResourceGroup string = appServiceApp.properties.resourceGroup

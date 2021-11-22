@@ -19,6 +19,14 @@
       "appServicePlanSubId": "ddf87969-a498-4676-a488-1932fbc5a306"
     }
   },
+  "mlzContainerRegistry": {
+    "Type":"Object",
+    "Value": {
+      "containerRegistryName": "contosoeastusacr",
+      "containerRegistryResourceGroup": "contoso-sharedServices",
+      "containerRegistrySubId": "ddf87969-a498-4676-a488-1932fbc5a306"
+    }
+  },
   "firewallPrivateIPAddress": {
     "Type": "String",
     "Value": "10.0.100.4"
