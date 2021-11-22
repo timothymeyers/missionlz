@@ -9,19 +9,27 @@ Once you have both items deployed and configured, add the names to your deployme
 */
 targetScope = 'subscription'
 param mlzDeploymentVariables object = json(loadTextContent('../deploymentVariables.json'))
-param keyVaultName string
-param keyVaultResourceGroup string
-param appServiceAppName string
+param keyVaultName string = '${mlzDeploymentVariables.mlzKeyVault.Value.keyVaultName}'
+param keyVaultResourceGroup string = '${mlzDeploymentVariables.mlzKeyVault.Value.keyVaultResourceGroup}'
+param keyVaultSubId string = '${mlzDeploymentVariables.mlzKeyVault.Value.keyVaultSubid}'
+param appServicePlanName string = '${mlzDeploymentVariables.mlzAppServicePlan.Value.appServicePlanName}'
+param appServicePlanResourceGroup string = '${mlzDeploymentVariables.mlzAppServicePlan.Value.appServicePlanResourceGroup}'
+param appServicePlanSubId string = '${mlzDeploymentVariables.mlzAppServicePlan.Value.appServicePlanSubId}'
+param containerRegistryName string
+param containerRegistryResourceGroup string
+param containerRegistrySubId string
+
+param appName string = '${mlzDeploymentVariables.mlzResourcePrefix.Value}-${deployment().location}-webapp'
 
 resource keyVaut 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
   name: keyVaultName
-  scope: resourceGroup(subscription().subscriptionId, keyVaultResourceGroup )
+  scope: resourceGroup(keyVaultSubId, keyVaultResourceGroup )
 }
 module appServiceApp 'modules/containerWebApp.bicep' = {
-  name: appServiceAppName
+  name: appName
   scope: resourceGroup(keyVaultResourceGroup)
   params: {
-    appServiceAppName: appServiceAppName
+    appServiceAppName: appName
     dockerRegistryPassword: keyVaut.getSecret('dockerRegistryPassword')
     dockerRegistryUrl: keyVaut.getSecret('dockerRegistryUrl')
     dockerRegistryUsername: keyVaut.getSecret('dockerRegistryUsername')

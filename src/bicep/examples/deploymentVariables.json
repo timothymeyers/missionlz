@@ -3,6 +3,22 @@
     "Type": "String",
     "Value": "contoso"
   },
+  "mlzKeyVault": {
+    "Type":"Object",
+    "Value": {
+      "keyVaultName": "contoso-eastus-kv",
+      "keyVaultResourceGroup": "contoso-sharedServices",
+      "keyVaultSubid": "ddf87969-a498-4676-a488-1932fbc5a306"
+    }
+  },
+  "mlzAppServicePlan": {
+    "Type":"Object",
+    "Value": {
+      "appServicePlanName": "contoso-asp",
+      "appServicePlanResourceGroup": "contoso-sharedServices",
+      "appServicePlanSubId": "ddf87969-a498-4676-a488-1932fbc5a306"
+    }
+  },
   "firewallPrivateIPAddress": {
     "Type": "String",
     "Value": "10.0.100.4"
