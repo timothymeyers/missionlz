@@ -1,29 +1,25 @@
 targetScope = 'subscription'
 
-param mlzDeploymentVariables object = json(loadTextContent('../deploymentVariables.json'))
-
+@description('The name of the workload being deployed. It is used to calculate the names of resources, including the vnet, subnet, NSG, log storage account, and tags.')
 @minLength(3)
 @maxLength(24)
 param workloadName string
 
+@description('The name of the Azure deployment that was used to deploy the Mission Landing Zone core infrastructure. You can find the deployment name using the Azure Portal under the MLZ hub subscription at Subscriptions --> Deployments, or you can run this AZ CLI command on the MLZ hub subscription to see all deployments in the subscription: az deployment sub list --query [].name')
+param mlzHubDeploymentName string
+
+@description('The ID of the subscription containing the Mission Landing Zone firewall, i.e., the hub.')
+param hubSubscriptionId string
+
 param resourceGroupName string = '${workloadName}-rg'
 param location string = deployment().location
-param tags object = {
-  'resourceIdentifier': resourceIdentifier
-}
-
-param hubSubscriptionId string = mlzDeploymentVariables.hub.Value.subscriptionId
-param hubResourceGroupName string = mlzDeploymentVariables.hub.Value.resourceGroupName
-param hubVirtualNetworkName string = mlzDeploymentVariables.hub.Value.virtualNetworkName
-param hubVirtualNetworkResourceId string = mlzDeploymentVariables.hub.Value.virtualNetworkResourceId
-param logAnalyticsWorkspaceResourceId string = mlzDeploymentVariables.logAnalyticsWorkspaceResourceId.Value
-param firewallPrivateIPAddress string = mlzDeploymentVariables.firewallPrivateIPAddress.Value
-
 param virtualNetworkName string = '${workloadName}-vnet'
 param virtualNetworkAddressPrefix string = '10.0.125.0/26'
 param virtualNetworkDiagnosticsLogs array = []
 param virtualNetworkDiagnosticsMetrics array = []
-
+param subnetName string = '${workloadName}-subnet'
+param subnetAddressPrefix string = '10.0.125.0/27'
+param subnetServiceEndpoints array = []
 param networkSecurityGroupName string = '${workloadName}-nsg'
 param networkSecurityGroupRules array = []
 param networkSecurityGroupDiagnosticsLogs array = [
@@ -37,15 +33,24 @@ param networkSecurityGroupDiagnosticsLogs array = [
   }
 ]
 param networkSecurityGroupDiagnosticsMetrics array = []
-
-param subnetName string = '${workloadName}-subnet'
-param subnetAddressPrefix string = '10.0.125.0/27'
-param subnetServiceEndpoints array = []
-
 param logStorageAccountName string = toLower(take('logs${uniqueString(subscription().subscriptionId, workloadName)}', 24))
 param logStorageSkuName string = 'Standard_GRS'
-
 param resourceIdentifier string = '${workloadName}${uniqueString(workloadName)}'
+param tags object = {
+  'resourceIdentifier': resourceIdentifier
+}
+
+// Load the MLZ hub network deployment and retrieve values.
+resource mlzHubDeployment 'Microsoft.Resources/deployments@2021-04-01' existing = {
+  scope: subscription(hubSubscriptionId)
+  name: mlzHubDeploymentName
+}
+var mlzDeploymentVariables = mlzHubDeployment.properties.outputs
+var hubResourceGroupName = mlzDeploymentVariables.hub.Value.resourceGroupName
+var hubVirtualNetworkName = mlzDeploymentVariables.hub.Value.virtualNetworkName
+var hubVirtualNetworkResourceId = mlzDeploymentVariables.hub.Value.virtualNetworkResourceId
+var logAnalyticsWorkspaceResourceId = mlzDeploymentVariables.logAnalyticsWorkspaceResourceId.Value
+var firewallPrivateIPAddress = mlzDeploymentVariables.firewallPrivateIPAddress.Value
 
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: resourceGroupName
