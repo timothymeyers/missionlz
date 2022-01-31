@@ -1,5 +1,11 @@
 {
   "$schema": "<relative path to createFormUI.schema.json>",
+  "parameters": {
+    "config": {
+      "basics": {}
+    },
+    "basics": []
+  },
   "view": {
     "kind": "Form",
     "properties": {
