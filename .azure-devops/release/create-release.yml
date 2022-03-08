@@ -7,6 +7,11 @@ parameters:
   displayName: The Release Tag (e.g. "v2022.03.04")
   type: string
 
+- name: packageName
+  displayName: The software bill of materials (SBOM) package name
+  type: string
+  default: 'mission-lz'
+
 - name: packageVersion
   displayName: The software bill of materials (SBOM) package version (e.g. "2022.03.04")
   type: string
@@ -31,7 +36,7 @@ steps:
   inputs:
     BuildComponentPath: '$(Build.SourcesDirectory)'
     BuildDropPath: '$(Build.SourcesDirectory)'
-    PackageName: 'sbom-package-name'
+    PackageName: '${{ parameters.packageName }}'
     PackageVersion: '${{ parameters.packageVersion }}'
     Verbosity: Verbose
 
