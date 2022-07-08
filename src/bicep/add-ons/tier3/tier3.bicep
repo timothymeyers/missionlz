@@ -81,6 +81,12 @@ param logStorageSkuName string = 'Standard_GRS'
 @description('A string dictionary of tags to add to deployed resources. See https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/tag-resources?tabs=json#arm-templates for valid settings.')
 param tags object = {}
 
+@description('A string name for the workload')
+param workloadName string = 'workload'
+
+@description('A string short name for the workload')
+param workloadShortName string = 'w1'
+
 /*
 
   NAMING CONVENTION
@@ -94,7 +100,7 @@ param tags object = {}
 
 var resourceToken = 'resource_token'
 var nameToken = 'name_token'
-var namingConvention = '${toLower(workloadName)}-${resourceToken}-${nameToken}-${toLower(resourceSuffix)}'
+var namingConvention = '${toLower(resourcePrefix)}-${toLower(workloadName)}-${resourceToken}-${nameToken}-${toLower(resourceSuffix)}'
 
 var resourceGroupNamingConvention = replace(namingConvention, resourceToken, 'rg')
 var virtualNetworkNamingConvention = replace(namingConvention, resourceToken, 'vnet')
@@ -102,8 +108,6 @@ var networkSecurityGroupNamingConvention = replace(namingConvention, resourceTok
 var storageAccountNamingConvention = toLower('${resourcePrefix}st${nameToken}unique_storage_token')
 var subnetNamingConvention = replace(namingConvention, resourceToken, 'snet')
 
-var workloadName = 'workload'
-var workloadShortName = 'wl'
 var workloadResourceGroupName = replace(resourceGroupNamingConvention, nameToken, workloadName)
 var workloadLogStorageAccountShortName = replace(storageAccountNamingConvention, nameToken, workloadShortName)
 var workloadLogStorageAccountUniqueName = replace(workloadLogStorageAccountShortName, 'unique_storage_token', uniqueString(resourcePrefix, resourceSuffix, workloadSubscriptionId))
