@@ -100,7 +100,7 @@ param workloadShortName string = 'w1'
 
 var resourceToken = 'resource_token'
 var nameToken = 'name_token'
-var namingConvention = '${toLower(resourcePrefix)}-${toLower(workloadName)}-${resourceToken}-${nameToken}-${toLower(resourceSuffix)}'
+var namingConvention = '${toLower(resourcePrefix)}-${resourceToken}-${nameToken}-${toLower(resourceSuffix)}'
 
 var resourceGroupNamingConvention = replace(namingConvention, resourceToken, 'rg')
 var virtualNetworkNamingConvention = replace(namingConvention, resourceToken, 'vnet')
@@ -108,13 +108,13 @@ var networkSecurityGroupNamingConvention = replace(namingConvention, resourceTok
 var storageAccountNamingConvention = toLower('${resourcePrefix}st${nameToken}unique_storage_token')
 var subnetNamingConvention = replace(namingConvention, resourceToken, 'snet')
 
-var workloadResourceGroupName = replace(resourceGroupNamingConvention, nameToken, workloadName)
-var workloadLogStorageAccountShortName = replace(storageAccountNamingConvention, nameToken, workloadShortName)
+var workloadResourceGroupName = replace(resourceGroupNamingConvention, nameToken, toLower(workloadName))
+var workloadLogStorageAccountShortName = replace(storageAccountNamingConvention, nameToken, toLower(workloadShortName))
 var workloadLogStorageAccountUniqueName = replace(workloadLogStorageAccountShortName, 'unique_storage_token', uniqueString(resourcePrefix, resourceSuffix, workloadSubscriptionId))
 var workloadLogStorageAccountName = take(workloadLogStorageAccountUniqueName, 23)
-var workloadVirtualNetworkName = replace(virtualNetworkNamingConvention, nameToken, workloadName)
-var workloadNetworkSecurityGroupName = replace(networkSecurityGroupNamingConvention, nameToken, workloadName)
-var workloadSubnetName = replace(subnetNamingConvention, nameToken, workloadName)
+var workloadVirtualNetworkName = replace(virtualNetworkNamingConvention, nameToken, toLower(workloadName))
+var workloadNetworkSecurityGroupName = replace(networkSecurityGroupNamingConvention, nameToken, toLower(workloadName))
+var workloadSubnetName = replace(subnetNamingConvention, nameToken, toLower(workloadName))
 
 var defaultTags = {
   'DeploymentType': 'MissionLandingZoneARM'
